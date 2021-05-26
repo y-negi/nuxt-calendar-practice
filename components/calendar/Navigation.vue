@@ -11,11 +11,12 @@
       </button>
     </div>
     <div id="calendar-navigation-current-month">{{ year }}年{{ month }}月</div>
+    <div id="calendar-navigation-weather">東京： <img :src="weatherIconUrl" width="32" height="32" /></div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'nuxt-composition-api'
+import { defineComponent, ref, useAsync } from 'nuxt-composition-api'
 
 export default defineComponent({
   props: {
@@ -32,9 +33,21 @@ export default defineComponent({
     const onClickPrevious = () => context.emit('onClickPrevious')
     const onClickNext = () => context.emit('onClickNext')
 
+    const weatherIconUrl = ref('')
+
+    useAsync(async () => {
+      weatherIconUrl.value = await context.root.$axios
+        .$get('/api/location/1118370/')
+        .then((response) => {
+          const icon = response['consolidated_weather'][0]['weather_state_abbr']
+          return `https://www.metaweather.com/static/img/weather/${icon}.svg`
+        })
+    })
+
     return {
       onClickPrevious,
       onClickNext,
+      weatherIconUrl,
     }
   },
 })
@@ -78,5 +91,16 @@ export default defineComponent({
   margin-left: 24px;
   font-size: 24px;
   color: gray;
+}
+
+#calendar-navigation-weather {
+  height: 80%;
+  vertical-align: middle;
+  margin-left: 24px;
+  font-size: 24px;
+  color: gray;
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
 }
 </style>

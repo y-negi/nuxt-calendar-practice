@@ -38,7 +38,19 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: [
+    // https://axios.nuxtjs.org/
+    '@nuxtjs/axios'
+  ],
+
+  axios: {
+    baseURL: 'https://www.metaweather.com',
+    proxy: true
+  },
+
+  proxy: {
+    '/api/': 'https://www.metaweather.com'
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},

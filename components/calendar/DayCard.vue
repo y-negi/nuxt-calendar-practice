@@ -53,8 +53,7 @@ export default defineComponent({
   },
   setup(props) {
     // 型をDateにしているのにstringになってしまう。一旦Date型に戻してからgetDateする。
-    const currentDate = new Date(props.date)
-    const day = currentDate.getDate()
+    const day = computed(() => new Date(props.date).getDate())
 
     const textColor = computed(() =>
       props.isCurrentMonth ? 'gray' : 'lightGray'
@@ -62,16 +61,17 @@ export default defineComponent({
     const fontWeight = computed(() => (props.isToday ? 'bold' : 'normal'))
 
     const accessor = useContext().app.$accessor
-    const schedules = computed(() => accessor.modules.schedules.schedules.filter(
-      (schedule) => {
+    const schedules = computed(() =>
+      accessor.modules.schedules.schedules.filter((schedule) => {
+        const currentDate = new Date(props.date)
         const scheduleDate = new Date(schedule.date)
         return (
           scheduleDate.getFullYear() == currentDate.getFullYear() &&
           scheduleDate.getMonth() == currentDate.getMonth() &&
           scheduleDate.getDate() == currentDate.getDate()
         )
-      }
-    ))
+      })
+    )
 
     const isShowModal = ref(false)
 
@@ -117,6 +117,7 @@ export default defineComponent({
   background-color: lightseagreen;
   color: white;
   margin: 2px;
+  flex: 1;
 }
 
 #modal-add-schedule {
