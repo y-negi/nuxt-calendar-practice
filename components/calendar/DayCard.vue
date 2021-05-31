@@ -29,12 +29,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  computed,
-  ref,
-  useContext,
-} from 'nuxt-composition-api'
+import { defineComponent, computed, ref } from 'nuxt-composition-api'
 
 export default defineComponent({
   props: {
@@ -51,7 +46,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup(props, context) {
     // 型をDateにしているのにstringになってしまう。一旦Date型に戻してからgetDateする。
     const day = computed(() => new Date(props.date).getDate())
 
@@ -60,7 +55,7 @@ export default defineComponent({
     )
     const fontWeight = computed(() => (props.isToday ? 'bold' : 'normal'))
 
-    const accessor = useContext().app.$accessor
+    const accessor = context.root.$accessor
     const schedules = computed(() =>
       accessor.modules.schedules.schedules.filter((schedule) => {
         const currentDate = new Date(props.date)

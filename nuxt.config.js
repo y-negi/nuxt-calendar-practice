@@ -20,7 +20,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['@/plugins/RepositoryFactory.ts'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -34,22 +34,33 @@ export default {
     // https://github.com/nuxt-community/composition-api
     'nuxt-composition-api',
     // https://typed-vuex.roe.dev/
-    'nuxt-typed-vuex'
+    'nuxt-typed-vuex',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://axios.nuxtjs.org/
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
   ],
 
-  axios: {
-    baseURL: 'https://www.metaweather.com',
-    proxy: true
+  router: {
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: 'custom',
+        path: '/',
+        component: resolve(__dirname, 'pages/calendar/index.vue')
+      })
+    }
   },
 
+  axios: {
+    host: 'https://www.metaweather.com',
+    proxy: true,
+  },
+
+  // 開発環境でCORS回避するための対応
   proxy: {
-    '/api/': 'https://www.metaweather.com'
+    '/api/': 'https://www.metaweather.com',
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

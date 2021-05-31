@@ -11,12 +11,15 @@
       </button>
     </div>
     <div id="calendar-navigation-current-month">{{ year }}年{{ month }}月</div>
-    <div id="calendar-navigation-weather">東京： <img :src="weatherIconUrl" width="32" height="32" /></div>
+    <div id="calendar-navigation-weather">
+      東京： <img :src="weatherIconUrl" width="32" height="32" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, useAsync } from 'nuxt-composition-api'
+import { WeatherShowResponse } from '@/types/APIResponse'
 
 export default defineComponent({
   props: {
@@ -36,11 +39,15 @@ export default defineComponent({
     const weatherIconUrl = ref('')
 
     useAsync(async () => {
-      weatherIconUrl.value = await context.root.$axios
-        .$get('/api/location/1118370/')
+      weatherIconUrl.value = await context.root.$repositories.weather
+        .show<WeatherShowResponse>(1118370) // 東京のID
         .then((response) => {
-          const icon = response['consolidated_weather'][0]['weather_state_abbr']
+          const icon = response.consolidated_weather[0].weather_state_abbr
           return `https://www.metaweather.com/static/img/weather/${icon}.svg`
+        })
+        .catch((reason) => {
+          console.log('Weather API Failed. Reason:' + reason)
+          return ''
         })
     })
 
